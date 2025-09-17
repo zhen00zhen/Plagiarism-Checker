@@ -11,6 +11,11 @@ import jieba  # type: ignore
 import math
 from collections import Counter
 from typing import List, Set
+from functools import lru_cache  # noqa: F401
+
+jieba.initialize()  # 预初始化分词模型
+
+PUNCTUATION_PATTERN = re.compile(r"[^\w\s]")
 
 # 同义词词典 - 提高查重准确性
 SYNONYMS = {
@@ -281,7 +286,7 @@ def normalize_words(words: List[str]) -> List[str]:
         # 检查2-gram和3-gram
         for n in range(3, 0, -1):
             if i + n <= len(words):
-                phrase = "".join(words[i:i+n])
+                phrase = "".join(words[i: i + n])
                 if phrase in SYNONYMS:
                     normalized.append(SYNONYMS[phrase])
                     i += n
@@ -303,8 +308,8 @@ def preprocess(text: str) -> List[str]:
     Returns:
         处理后的词列表
     """
-    # 移除标点符号
-    text = re.sub(r"[^\w\s]", "", text)
+    # 使用预编译的正则表达式移除标点符号
+    text = PUNCTUATION_PATTERN.sub("", text)
 
     # 使用jieba分词，并转换为列表
     words = list(jieba.cut(text))
@@ -312,7 +317,7 @@ def preprocess(text: str) -> List[str]:
     # 过滤停用词、空字符和单个字符
     words = [word for word in words if word not in STOPWORDS and len(word) > 1]
 
-    # 同义词标准化
+    # 同义词标准化（如果normalize_words函数存在）
     words = normalize_words(words)
 
     return words
@@ -411,3 +416,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
