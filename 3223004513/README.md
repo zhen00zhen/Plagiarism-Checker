@@ -73,26 +73,31 @@ paper-check/
 测试
 运行单元测试
 bash
-python -m unittest discover
+python -m unittest discover -v
 
 测试覆盖率检查
 bash
 coverage run -m unittest discover
 coverage report
+coverage html
 
 代码质量检查
 bash
 # 代码格式化
 black main.py test_main.py
 # 代码风格检查
-flake8 main.py test_main.py
+flake8 main.py test_main.py --max-line-length=120
 # 类型检查
 mypy main.py test_main.py
 
 性能分析
 可以使用cProfile进行性能分析：
 bash
-python -m cProfile -o profile_output main.py samples/orig.txt samples/plagiarized.txt samples/result.txt
+python -m cProfile -o profile_output main.py orig.txt orig_add.txt result.txt
+snakeviz profile_output
+python -m pstats profile_output
+sort cumulative  
+stats 20
 
 注意事项
 1.系统仅支持UTF-8编码的文本文件
