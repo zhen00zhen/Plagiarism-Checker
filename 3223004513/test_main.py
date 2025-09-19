@@ -73,6 +73,12 @@ class TestPaperCheck(unittest.TestCase):
         with self.assertRaises(SystemExit):
             read_file("invalid_encoding.txt")
 
+    @patch("builtins.open", side_effect=Exception("模拟其他异常"))
+    def test_read_file_other_exception(self, mock_open):
+        """测试读取文件时遇到其他异常的情况"""
+        with self.assertRaises(SystemExit):
+            read_file("other_error.txt")
+
     def test_write_file_normal(self):
         """测试文件写入功能"""
         write_file("test_output.txt", 75.50)
@@ -85,6 +91,12 @@ class TestPaperCheck(unittest.TestCase):
         """测试写入无权限文件时的异常处理"""
         with self.assertRaises(SystemExit):
             write_file("no_permission.txt", 75.50)
+
+    @patch("builtins.open", side_effect=Exception("模拟其他异常"))
+    def test_write_file_other_exception(self, mock_open):
+        """测试写入文件时遇到其他异常的情况"""
+        with self.assertRaises(SystemExit):
+            write_file("other_error.txt", 75.50)
 
     def test_preprocess_normal(self):
         """测试文本预处理功能"""
